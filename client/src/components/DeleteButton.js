@@ -2,15 +2,15 @@ import React from 'react'
 import axios from 'axios';
 
 export default props => {
-    const deleteProduct = e => {        
-        axios.delete('http://localhost:8000/api/products/delete/' + props.productID)
+    const deleteAuthor = e => {        
+        axios.delete('http://localhost:8000/api/authors/delete/' + props.authorID)
         .then(res=>{
             props.successfulCallback()
             })
         .catch(console.log)
     }
     return (
-        <button onClick={deleteProduct}>
+        <button onClick={deleteAuthor}>
             Delete
         </button>
     )

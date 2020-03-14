@@ -1,45 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import {Link, navigate} from '@reach/router';
-import ProductForm from '../components/ProductForm';
-import DeleteButton from '../components/DeleteButton';
+import AuthorForm from '../components/AuthorForm';
 
 export default (props) => {
-    const [product,setProduct] = useState({});
+    const [author,setAuthor] = useState({});
     const [loaded,setLoaded] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     // On initial load, get DB info
     useEffect(() => {     
-        axios.get("http://localhost:8000/api/products/" + props.id)
+        axios.get("http://localhost:8000/api/authors/" + props.id)
             .then(res => {
-                setProduct({...res.data});
-                setLoaded(true);
+                // only if id worked - for some reason, catch didn't work
+                if (res.data != null){
+                    setAuthor({...res.data});
+                    setLoaded(true);
+                }
             })
             .catch(console.log)
     }, [props])
 
     // When a new form is submitted, PUT request to backend
-    const updateProduct = product => {
-        axios.put(`http://localhost:8000/api/products/update/${props.id}`, product)
+    const updateAuthor = author => {
+        axios.put(`http://localhost:8000/api/authors/update/${props.id}`, author)
             .then(res=>{
                 console.log("Response: ",res)
                 // route back to detail
-                navigate(`/products/${props.id}`)
+                navigate('/')
             })
-            .catch(err=>console.log("Error: ",err))
+            .catch(err=>setErrors(err.response.data.errors))
     }
 
     return (
-        <div>            
-            {loaded && <h2>Editing {product.title}</h2>}
-            {loaded && <ProductForm 
-                onSubmitProp={updateProduct}
-                initTitle={product.title}
-                initPrice={product.price}
-                initDescription={product.description}
-            />}
-            {loaded && <DeleteButton productID={product._id} successfulCallback={() => navigate("/")} />}
-            <Link to={"/products/" + props.id}>Back</Link>
+        <div>
+            <Link to="/">Home</Link>            
+            <h3>Edit this author</h3>
+            {loaded 
+                ? <AuthorForm onSubmitProp={updateAuthor} initName={author.name} errors={errors} /> 
+                : <><p>We couldn't find the author you are looking for.</p>
+                <Link to={"/new"}>Would you like to try adding this author?<br/></Link></>
+            }
+            <Link to={"/"}><br />Cancel</Link>
         </div>
     )
 }

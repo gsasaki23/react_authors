@@ -1,19 +1,19 @@
 import React from 'react';
-import {Router, Redirect} from '@reach/router';
+import {Router} from '@reach/router';
 import './App.css';
 import Main from './views/Main';
-import Detail from './views/Detail';
+import New from './views/New';
 import Edit from './views/Edit';
 import NotFound from './views/NotFound';
 
 function App() {
   return (
     <div className="App">
+      <h1>fAvORiTe aUtHOrS</h1>
       <Router>
-        <Redirect from="/" to="/products" noThrow="true" />
-        <Main path="products/"/>
-        <Detail path="products/:id"/>
-        <Edit path="products/:id/edit"/>
+        <Main path="/"/>
+        <New path="new/"/>
+        <Edit path="edit/:id"/>
         <NotFound default />
       </Router>
     </div>

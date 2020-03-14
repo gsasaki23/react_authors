@@ -1,39 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import ProductForm from '../components/ProductForm';
-import ProductList from '../components/ProductList';
+import AuthorList from '../components/AuthorList';
+import { Link } from '@reach/router';
 
 export default () => {
-    const [products, setProducts] = useState([]);
+    const [authors, setAuthors] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
-    // set products to list of all products from DB
+    // set authors to list of all authors from DB
     useEffect(()=>{
-        axios.get('http://localhost:8000/api/products')
+        axios.get('http://localhost:8000/api/authors')
             .then(res=>{
-                setProducts(res.data);
+                // set sorted author array to state "authors"
+                setAuthors(res.data.sort((authorOne,authorTwo)=>(authorOne.name > authorTwo.name)? 1:-1));
                 setLoaded(true);
             })
             .catch(err=>console.log("Error: ", err))
     },[])
 
-    // Called back from ProductForm, creates new product in DB
-    const createProduct = product => {
-        axios.post('http://localhost:8000/api/products/new', product)
-            .then(res=>{
-                console.log("Response: ",res);
-                setProducts([...products, res.data]);
-            })
-            .catch(err=>console.log("Error: ",err))
-    }
-
     return (
         <>
-            <h1>Product Manager</h1>
-            <ProductForm onSubmitProp={createProduct} initTitle="" initPrice={0} initDescription=""/>
-            <hr/>
-            {/* only loads if loaded. sends list of products AND function removeFromDom to child class */}
-            {loaded && <ProductList data={{products,setProducts}}/>}
+            <Link to="/new">Add an author</Link>
+            <hr />
+            <h3>We have the following authors:</h3>
+            {/* only loads if loaded. sends list of authors AND function removeFromDom to child class */}
+            {loaded && <AuthorList data={{authors,setAuthors}}/>}
         </>
     )
 }
